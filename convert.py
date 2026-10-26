@@ -1,4 +1,3 @@
-
 from pathlib import Path
 from PIL import Image
 from tqdm import tqdm
@@ -7,7 +6,7 @@ FRAMES_DIR = Path("frames")
 OUTPUT_FILE = Path("video.ascii")
 
 # Darkest to brightest
-CHARS = "@%#*+=-:. "
+CHARS = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"\^\`\'."
 
 WIDTH = 120
 CHAR_ASPECT = 0.5  # Approximate character width / height
