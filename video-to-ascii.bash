@@ -32,5 +32,9 @@ extract_frames() {
 
 source .venv/bin/activate
 extract_frames
-python convert.py
-python play.py
+if ! command -v python3 &> /dev/null; then
+    echo "Error: python3 is not installed. Please install python3 to proceed."
+    exit 1
+fi
+python3 convert.py
+python3 play.py
