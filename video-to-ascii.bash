@@ -22,7 +22,7 @@ extract_frames() {
         exit 1
     fi
     if ! command -v ffmpeg &> /dev/null; then
-        echo "Error: ffmpeg is not installed. Please install ffmpeg to proceed."
+        echo "Error: ffmpeg is not installed. Please install ffmpeg using 'sudo apt update && sudo apt install ffmpeg' to proceed."
         exit 1
     fi
     rm -rf frames
