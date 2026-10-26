@@ -189,5 +189,3 @@ Contributions are welcome. If you find a bug or want to improve the project, ope
 This project is licensed under the MIT License. See the `LICENSE` file for details.
 
 ---
-
-*ASCII art: proof that even pixels can have a character.*
