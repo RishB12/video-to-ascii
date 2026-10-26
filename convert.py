@@ -2,6 +2,9 @@ from pathlib import Path
 from PIL import Image
 from tqdm import tqdm
 import argparse
+import cv2
+import subprocess
+
 
 FRAMES_DIR = Path("frames")
 OUTPUT_FILE = Path("video.ascii")
@@ -12,6 +15,14 @@ CHARS = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"\^\`
 WIDTH = 120
 CHAR_ASPECT = 0.5  # Approximate character width / height
 
+def get_fps(vidp):
+    video = cv2.VideoCapture(vidp)
+    fps = video.get(cv2.CAP_PROP_FPS)
+    video.release()
+    if fps <= 0:
+        print("Failed to get FPS from metadata, defaulting to 60 FPS")
+        return 60
+    return fps
 
 def image_to_ascii(path, colour=False):
     with Image.open(path) as image:
@@ -35,16 +46,16 @@ def image_to_ascii(path, colour=False):
             index = brightness * (len(CHARS) - 1) // 255
             char = CHARS[index]
 
+            if colour:
+                row.append(f"\033[38;2;{r};{g};{b}m{char}")
+            else:
+                row.append(char)
+
         if colour:
-            row.append(f"\033[38;2;{r};{g};{b}m{char}")
+            result.append("".join(row) + "\033[0m")
         else:
-            row.append(char)
-
-    if colour:
-        result.append("".join(row) + "\033[0m")
-    else:
-        result.append("".join(row))
-
+            result.append("".join(row))
+    return "\n".join(result)
 
 def main():
     parser = argparse.ArgumentParser(description="Convert video frames to ASCII art")
@@ -55,14 +66,33 @@ def main():
         action="store_true",
         help="Enable RGB colour output"
     )
-
+    parser.add_argument(
+        "Main_Video_File",
+        help="Main video file for FPS"
+    )
+    parser.add_argument(
+        "Scale_W",
+        help="Scale Width"
+    )
     args = parser.parse_args()
-    frames = sorted(FRAMES_DIR.glob("*.png"))
 
+    FPS = get_fps(f"{args.Main_Video_File}")
+    subprocess.run(["ffmpeg",
+                   "-i", 
+                   f"{args.Main_Video_File}",
+                   "-vf",
+                   f"fps={FPS},scale={args.Scale_W}:-1:flags=lanczos,format=gray",
+                   "frames/%06d.png"], check = True
+                   )
+    print("FPS =", FPS)
+    frames = sorted(FRAMES_DIR.glob("*.png"))
     if not frames:
         raise SystemExit("No PNG frames found in frames/")
 
     with OUTPUT_FILE.open("w", encoding="utf-8") as output:
+        output.write(str(FPS))
+        output.write("\n")
+        output.write("END_METADATA\n")
         for number, frame in enumerate(tqdm(frames, desc="Converting frames"), 1):
             ascii_frame = image_to_ascii(frame, colour=args.colour)
 

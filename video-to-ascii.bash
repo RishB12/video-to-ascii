@@ -1,6 +1,5 @@
 extract_frames() {
     read -p "Enter video filename: " videopath 
-    read -p "Enter fps (frames per second) (15 recommended): " fps
     read -p "Enter scale width (height will be auto-scaled) (120 recommended): " scale_width
     read -p "Proceeding will delete the 'frames' directory if it exists. Do you want to continue? (y/n): " confirm
 
@@ -13,10 +12,6 @@ extract_frames() {
         echo "Error: File '$videopath' not found!"
         exit 1
     fi
-    if ! [[ "$fps" =~ ^[0-9]+$ ]]; then
-        echo "Error: FPS must be a positive integer."
-        exit 1
-    fi
     if ! [[ "$scale_width" =~ ^[0-9]+$ ]]; then
         echo "Error: Scale width must be a positive integer."
         exit 1
@@ -27,7 +22,7 @@ extract_frames() {
     fi
     rm -rf frames
     mkdir frames
-    ffmpeg -i "$videopath" -vf "fps=$fps,scale=$scale_width:-1:flags=lanczos,format=gray" frames/%06d.png
+    
 }
 
 if ! command -v python3 &> /dev/null; then
@@ -48,8 +43,8 @@ read -p "Please select an option (1, 2, 3, or 4): " option
 case $option in
     1)
         extract_frames
-        python3 convert.py
-        python3 play.py "video.ascii" -f $fps
+        python3 convert.py $videopath $scale_width
+        python3 play.py "video.ascii"
         ;;
     2)
         python3 play.py "video.ascii"
@@ -59,7 +54,7 @@ case $option in
             echo "Error: 'frames' directory not found."
             exit 1
         fi
-        python3 convert.py
+        python3 convert.py $videopath $scale_width
         python3 play.py "video.ascii"
         ;;
     4)
