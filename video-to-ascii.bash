@@ -30,11 +30,49 @@ extract_frames() {
     ffmpeg -i "$videopath" -vf "fps=$fps,scale=$scale_width:-1:flags=lanczos,format=gray" frames/%06d.png
 }
 
-source .venv/bin/activate
-extract_frames
 if ! command -v python3 &> /dev/null; then
     echo "Error: python3 is not installed. Please install python3 to proceed."
     exit 1
 fi
-python3 convert.py
-python3 play.py
+
+source .venv/bin/activate
+
+echo "Welcome to video-to-ascii! This script will convert a video into ASCII art and play it in the terminal."
+echo "Options:"
+echo "1. Convert a video to ASCII and play it"
+echo "2. Play last converted video"
+echo "3. Use pre-extracted frames to convert to ASCII and play it"
+echo "4. Use pre-existing .ascii files to play ASCII art"
+read -p "Please select an option (1, 2, 3, or 4): " option
+
+case $option in
+    1)
+        extract_frames
+        python3 convert.py
+        python3 play.py "video.ascii"
+        ;;
+    2)
+        python3 play.py "video.ascii"
+        ;;
+    3)
+        if [ ! -d "frames" ]; then
+            echo "Error: 'frames' directory not found."
+            exit 1
+        fi
+        python3 convert.py
+        python3 play.py "video.ascii"
+        ;;
+    4)
+        read -p "Enter the .ascii filename (eg. video.ascii): " ascii_filename
+        if [ ! -f "$ascii_filename" ]; then
+            echo "Error: File '$ascii_filename' not found."
+            exit 1
+        fi
+        python3 play.py "$ascii_filename"
+        ;;
+
+    *)
+        echo "Invalid option. Please select 1, 2, 3, or 4."
+        exit 1
+        ;;
+esac
