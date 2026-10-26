@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser(description="Play ASCII video in terminal.")
 parser.add_argument("video_file", type=str, help="Path to the ASCII video file (default: video.ascii)")
 
 FPS = 15
-INPUT_FILE = Path(parser.video_file)
+INPUT_FILE = Path(parser.parse_args().video_file)
 
 
 def main():
