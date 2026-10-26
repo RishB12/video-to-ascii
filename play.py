@@ -1,4 +1,3 @@
-
 import sys
 import time
 from pathlib import Path
@@ -6,8 +5,9 @@ import argparse
 
 parser = argparse.ArgumentParser(description="Play ASCII video in terminal.")
 parser.add_argument("video_file", type=str, help="Path to the ASCII video file (default: video.ascii)")
+parser.add_argument("-f", "--fps", type=int, default=15, help="Frames per second (default: 15)")
 
-FPS = 15
+FPS = parser.parse_args().fps
 INPUT_FILE = Path(parser.parse_args().video_file)
 
 

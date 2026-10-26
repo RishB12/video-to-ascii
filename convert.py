@@ -1,6 +1,7 @@
 from pathlib import Path
 from PIL import Image
 from tqdm import tqdm
+import argparse
 
 FRAMES_DIR = Path("frames")
 OUTPUT_FILE = Path("video.ascii")
@@ -12,9 +13,9 @@ WIDTH = 120
 CHAR_ASPECT = 0.5  # Approximate character width / height
 
 
-def image_to_ascii(path):
+def image_to_ascii(path, colour=False):
     with Image.open(path) as image:
-        image = image.convert("L")
+        image = image.convert("RGB")
 
         height = round(
             image.height * WIDTH / image.width * CHAR_ASPECT
@@ -29,16 +30,33 @@ def image_to_ascii(path):
         row = []
 
         for x in range(WIDTH):
-            brightness = pixels[y * WIDTH + x]
+            r, g, b = pixels[y * WIDTH + x]
+            brightness = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
             index = brightness * (len(CHARS) - 1) // 255
-            row.append(CHARS[index])
+            char = CHARS[index]
 
+        if colour:
+            row.append(f"\033[38;2;{r};{g};{b}m{char}")
+        else:
+            row.append(char)
+
+    if colour:
+        result.append("".join(row) + "\033[0m")
+    else:
         result.append("".join(row))
-
-    return "\n".join(result)
 
 
 def main():
+    parser = argparse.ArgumentParser(description="Convert video frames to ASCII art")
+
+    parser.add_argument(
+        "-c", "--colour", "--color",
+        dest="colour",
+        action="store_true",
+        help="Enable RGB colour output"
+    )
+
+    args = parser.parse_args()
     frames = sorted(FRAMES_DIR.glob("*.png"))
 
     if not frames:
@@ -46,7 +64,7 @@ def main():
 
     with OUTPUT_FILE.open("w", encoding="utf-8") as output:
         for number, frame in enumerate(tqdm(frames, desc="Converting frames"), 1):
-            ascii_frame = image_to_ascii(frame)
+            ascii_frame = image_to_ascii(frame, colour=args.colour)
 
             # Form-feed separates frames in the output file.
             if number > 1:

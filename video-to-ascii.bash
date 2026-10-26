@@ -49,7 +49,7 @@ case $option in
     1)
         extract_frames
         python3 convert.py
-        python3 play.py "video.ascii"
+        python3 play.py "video.ascii" -f $fps
         ;;
     2)
         python3 play.py "video.ascii"
