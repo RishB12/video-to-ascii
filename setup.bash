@@ -3,6 +3,7 @@ if ! command -v python3 &> /dev/null; then
     exit 1
 fi
 python3 -m venv .venv
+source .venv/bin/activate
 pip install --upgrade pip
 pip install -r requirements.txt
 echo "Setup complete. You can now run 'bash video-to-ascii.bash' to start the process."
