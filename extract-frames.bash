@@ -1,0 +1,1 @@
+ffmpeg -i input.mp4 -vf "fps=15,scale=120:-1:flags=lanczos,format=gray" frames/%06d.png
