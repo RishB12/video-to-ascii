@@ -65,8 +65,8 @@ pip install -r requirements.txt
 From the repository root:
 
 ```bash
-git clone <repo-url>
-cd "Video to Ascii"
+git clone https://github.com/RishB12/video-to-ascii.git
+cd "video-to-ascii"
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
