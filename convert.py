@@ -1,6 +1,7 @@
 
 from pathlib import Path
 from PIL import Image
+from tqdm import tqdm
 
 FRAMES_DIR = Path("frames")
 OUTPUT_FILE = Path("video.ascii")
@@ -45,7 +46,7 @@ def main():
         raise SystemExit("No PNG frames found in frames/")
 
     with OUTPUT_FILE.open("w", encoding="utf-8") as output:
-        for number, frame in enumerate(frames, start=1):
+        for number, frame in enumerate(tqdm(frames, desc="Converting frames"), 1):
             ascii_frame = image_to_ascii(frame)
 
             # Form-feed separates frames in the output file.
@@ -54,11 +55,12 @@ def main():
 
             output.write(ascii_frame)
 
-            if number % 100 == 0:
-                print(f"Converted {number}/{len(frames)} frames")
-
     print(f"Done! Saved {len(frames)} frames to {OUTPUT_FILE}")
 
 
 if __name__ == "__main__":
     main()
+
+for number, frame in enumerate(tqdm(frames, desc="Converting frames"), 1):
+    # Your processing logic here
+    pass

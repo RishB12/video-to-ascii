@@ -1,12 +1,14 @@
 extract_frames() {
     read -p "Enter video filename: " videopath 
-    read -p "Enter fps (frames per second): " fps
-    read -p "Enter scale width (height will be auto-scaled): " scale_width
+    read -p "Enter fps (frames per second) (15 recommended): " fps
+    read -p "Enter scale width (height will be auto-scaled) (120 recommended): " scale_width
     read -p "Proceeding will delete the 'frames' directory if it exists. Do you want to continue? (y/n): " confirm
-    if [[ "$confirm" =~ ^[yY]$ ]]; then
+
+    if [[ ! "$confirm" =~ ^[yY]([eE][sS])?$ ]]; then
         echo "Operation cancelled."
         exit 1
     fi
+
     if [ ! -f "$videopath" ]; then
         echo "Error: File '$videopath' not found!"
         exit 1
