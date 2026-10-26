@@ -60,7 +60,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-for number, frame in enumerate(tqdm(frames, desc="Converting frames"), 1):
-    # Your processing logic here
-    pass
