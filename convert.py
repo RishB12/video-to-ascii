@@ -6,7 +6,7 @@ FRAMES_DIR = Path("frames")
 OUTPUT_FILE = Path("video.ascii")
 
 # Darkest to brightest
-CHARS = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"\^\`\'."
+CHARS = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"\^\`\'."[::-1]
 
 WIDTH = 120
 CHAR_ASPECT = 0.5  # Approximate character width / height
