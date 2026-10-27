@@ -3,6 +3,8 @@ import sys
 import time
 from pathlib import Path
 import argparse
+import subprocess
+import platform
 
 parser = argparse.ArgumentParser(description="Play ASCII video.")
 parser.add_argument("video_file", nargs="?", default="video.ascii", help="Path to the ASCII video file (default: video.ascii)")
@@ -36,6 +38,10 @@ def main():
             # Reset terminal formatting and show the cursor
             sys.stdout.write("\033[0m\033[?25h\n")
             sys.stdout.flush()
+            if platform.system() == "Windows":
+                pass
+            else: 
+                subprocess.run("clear", check=True)
     
 
    
