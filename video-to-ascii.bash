@@ -43,7 +43,12 @@ read -p "Please select an option (1, 2, 3, or 4): " option
 case $option in
     1)
         extract_frames
-        python3 convert.py $videopath $scale_width
+        read -p "Do you want colorize the ASCII output? (y/n): " colorize
+        if [[ "$colorize" =~ ^[yY]([eE][sS])?$ ]]; then
+            python3 convert.py $videopath $scale_width -c
+        else
+            python3 convert.py $videopath $scale_width
+        fi
         python3 play.py "video.ascii"
         ;;
     2)
@@ -54,7 +59,12 @@ case $option in
             echo "Error: 'frames' directory not found."
             exit 1
         fi
-        python3 convert.py $videopath $scale_width
+        read =p "Do you want colorize the ASCII output? (y/n): " colorize
+        if [[ "$colorize" =~ ^[yY]([eE][sS])?$ ]]; then
+            python3 convert.py $videopath $scale_width -c
+        else
+            python3 convert.py $videopath $scale_width
+        fi
         python3 play.py "video.ascii"
         ;;
     4)

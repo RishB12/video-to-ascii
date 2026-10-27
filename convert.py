@@ -5,6 +5,23 @@ import argparse
 import cv2
 import subprocess
 
+parser = argparse.ArgumentParser(description="Convert video frames to ASCII art")
+
+parser.add_argument(
+    "-c", "--colour", "--color",
+    dest="colour",
+    action="store_true",
+    help="Enable RGB colour output"
+)
+parser.add_argument(
+    "Main_Video_File",
+    help="Main video file for FPS"
+)
+parser.add_argument(
+    "Scale_W",
+    help="Scale Width"
+)
+args = parser.parse_args()
 
 FRAMES_DIR = Path("frames")
 OUTPUT_FILE = Path("video.ascii")
@@ -12,7 +29,7 @@ OUTPUT_FILE = Path("video.ascii")
 # Darkest to brightest
 CHARS = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\\|()1{}[]?-_+~<>i!lI;:,\"\^\`\'."[::-1]
 
-WIDTH = 120
+WIDTH = int(args.Scale_W)
 CHAR_ASPECT = 0.5  # Approximate character width / height
 
 def get_fps(vidp):
@@ -58,30 +75,12 @@ def image_to_ascii(path, colour=False):
     return "\n".join(result)
 
 def main():
-    parser = argparse.ArgumentParser(description="Convert video frames to ASCII art")
-
-    parser.add_argument(
-        "-c", "--colour", "--color",
-        dest="colour",
-        action="store_true",
-        help="Enable RGB colour output"
-    )
-    parser.add_argument(
-        "Main_Video_File",
-        help="Main video file for FPS"
-    )
-    parser.add_argument(
-        "Scale_W",
-        help="Scale Width"
-    )
-    args = parser.parse_args()
-
     FPS = get_fps(f"{args.Main_Video_File}")
     subprocess.run(["ffmpeg",
                    "-i", 
                    f"{args.Main_Video_File}",
                    "-vf",
-                   f"fps={FPS},scale={args.Scale_W}:-1:flags=lanczos,format=gray",
+                   f"fps={FPS},scale={args.Scale_W}:-1:flags=lanczos",
                    "frames/%06d.png"], check = True
                    )
     print("FPS =", FPS)
