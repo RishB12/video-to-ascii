@@ -9,17 +9,14 @@ parser.add_argument("video_file", nargs="?", default="video.ascii", help="Path t
 
 args = parser.parse_args()
 INPUT_FILE = Path(args.video_file)
-
 def main():
     if not INPUT_FILE.exists():
         raise SystemExit("Video file not found. Please provide a valid ASCII video file.")
-
     data = INPUT_FILE.read_text(encoding="utf-8")
     splitter = data.split("END_METADATA")
     metadata = splitter[0].split()
     FPS = int(float(metadata[0]))
-    data = splitter[1]
-    data = data.lstrip("\n")
+    data = splitter[1].lstrip("\n")
     frames = data.split("\f")
     delay = 1 / FPS
     try:
