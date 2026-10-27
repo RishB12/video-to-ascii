@@ -2,12 +2,17 @@
 import sys
 import time
 from pathlib import Path
+import argparse
 
-INPUT_FILE = Path("video.ascii")
+parser = argparse.ArgumentParser(description="Play ASCII video.")
+parser.add_argument("video_file", nargs="?", default="video.ascii", help="Path to the ASCII video file (default: video.ascii)")
+
+args = parser.parse_args()
+INPUT_FILE = Path(args.video_file)
 
 def main():
     if not INPUT_FILE.exists():
-        raise SystemExit("video.ascii not found. Run convert.py first.")
+        raise SystemExit("Video file not found. Please provide a valid ASCII video file.")
 
     data = INPUT_FILE.read_text(encoding="utf-8")
     splitter = data.split("END_METADATA")
