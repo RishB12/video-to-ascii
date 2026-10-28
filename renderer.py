@@ -1,7 +1,6 @@
 from pathlib import Path
 from time import time
 from PIL import Image
-from tqdm import tqdm
 import argparse
 import cv2
 import subprocess
