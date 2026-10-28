@@ -8,6 +8,7 @@ import subprocess
 import time
 import json
 import sys
+import shutil
 
 parser = argparse.ArgumentParser(description="Convert video frames to ASCII art")
 
@@ -48,21 +49,24 @@ def get_fps(vidp):
 
 def image_to_ascii_image(image, colour=False):
     image = image.convert("RGB")
-    
-    height = round(
-    image.height * WIDTH / image.width * CHAR_ASPECT
-    )
-    
-    image = image.resize((WIDTH, max(1, height)))
-    pixels = list(image.getdata())
+
+    colums, lines = shutil.get_terminal_size()
+
+    twidth = max(1, colums-1)
+    max_height = max(1, lines-1)
+
+    height = min(max_height, round(image.height * twidth / image.width * CHAR_ASPECT))
+
+    image = image.resize((twidth, height))
+    pixels = list(image.get_flattened_data())
 
     result = []
 
     for y in range(height):
         row = []
 
-        for x in range(WIDTH):
-            r, g, b = pixels[y * WIDTH + x]
+        for x in range(twidth):
+            r, g, b = pixels[y * twidth + x]
             brightness = int(0.2126 * r + 0.7152 * g + 0.0722 * b)
             index = brightness * (len(CHARS) - 1) // 255
             char = CHARS[index]
@@ -106,8 +110,8 @@ def stream_video(video_path, width=WIDTH, colour=True):
         round((source_height * width / source_width) / 2) * 2,
     )
 
-    fps = get_fps(video_path)  # Your existing FPS function
-    frame_size = width * height * 3  # RGB = 3 bytes per pixel
+    fps = get_fps(video_path)  
+    #frame_size = width * height * 3  # RGB = 3 bytes per pixel
 
     command = [
         "ffmpeg", "-v", "error",
@@ -133,6 +137,8 @@ def stream_video(video_path, width=WIDTH, colour=True):
         sys.stdout.flush()
 
         while True:
+
+            frame_size = width * height * 3  # RGB = 3 bytes per pixel
             data = process.stdout.read(frame_size)
 
             if not data:
@@ -158,13 +164,6 @@ def stream_video(video_path, width=WIDTH, colour=True):
 
             if delay > 0:
                 time.sleep(delay)
-
-        return_code = process.wait()
-
-        if return_code != 0:
-            raise RuntimeError(
-                f"FFmpeg exited with code {return_code}"
-            )
     except KeyboardInterrupt:
         print("\nPlayback interrupted by user.", file=sys.stderr)
     else:
@@ -190,7 +189,7 @@ def stream_video(video_path, width=WIDTH, colour=True):
         sys.stdout.flush()
 
 def main():
-    stream_video(args.Main_Video_File, width=WIDTH, colour=args.colour)
+    stream_video(args.Main_Video_File, colour=args.colour)
 
 
 if __name__ == "__main__":
